@@ -1,0 +1,88 @@
+<div class="col-lg-8">
+    <h1 class="h1-strong">
+        Pistas
+    </h1>
+
+
+    <div class="people" *ngIf="tracks?.length!=0">
+        <div *ngFor="let track of tracks" class="item-track">
+            <div class="card card-default">
+                <div class="card-body">
+                    <div class="image-track pull-left">
+                        <a href="#">
+                            <img src="{{url+'get-image-user/'+track.user.avatar}}" *ngIf="track.user.avatar" />
+                            <img src="assets/user.png" class="avatar-default" *ngIf="!track.user.avatar" />
+                        </a>
+                    </div>
+
+                    <div class="data-track">
+                        <div class="titulo pull-left">
+                            {{track.titulo}} &nbsp;|&nbsp;
+                            <span *ngIf="track.status == 'ACCEPTED'" class="badge badge-success">ACEPTADO</span>
+                            <span *ngIf="track.status == 'REJECTED'" class="badge badge-danger">RECHAZADO</span>
+                            <span *ngIf="track.status == 'PENDING'" class="badge badge-info">PENDIENTE</span>
+
+                            <!-- Button trigger modal -->
+                            <a href="#myModal{{track._id}}" class="btn btn-primary" data-toggle="modal" role="button" id="btnEditTrack" *ngIf="track.status == 'PENDING'">
+                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                        <div class="audio pull-right">
+                            <audio controls class="audio-track">
+                                <source src="{{url + 'get-track/'+track.file}}" type="audio/mpeg">
+                                Tu navegador no soporta el audio.
+                            </audio> &nbsp;
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="myModal{{track._id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLongTitle">¿A qué estado desea cambiar?
+                                            </h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="refresh()">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form #trackForm="ngForm" class="col-lg-12">
+                                                <div class="form-group row">
+
+                                                    <label for="status" class="col-lg-6 col-sm-6 col-form-label">Seleccionar
+                                                Estado:</label>
+                                                    <select class="form-control col-lg-6 col-sm-6" id="status" name="status" #status="ngModel" [(ngModel)]="track.status" required>
+                                                <option value="ACCEPTED">ACEPTADO</option>
+                                                <option value="REJECTED">RECHAZADO</option>
+
+                                                </select>
+                                                    <div *ngIf="!status.valid && status.touched">
+                                                        <span *ngIf="status.errors?.required" class="validation">Debes seleccionar un estado.</span>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="refresh()">Cancelar</button>
+                                            <button type="button" class="btn btn-primary" (click)="update(track)" data-dismiss="modal">Cambiar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <ul class="pagination pull-right">
+            <li class="page-item" *ngIf="page > 1"><a class="page-link" [routerLink]="['/tracks',prev_page]">Anterior</a>
+            </li>
+            <li class="page-item" *ngIf="pages != page"><a class="page-link" [routerLink]="['/tracks',next_page]">Siguiente</a></li>
+        </ul>
+    </div>
+    <p class="messagesEmpty" *ngIf="tracks?.length == 0"> No hay pistas.</p>
+
+
+</div>

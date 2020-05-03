@@ -1,0 +1,59 @@
+<div class="col-lg-8">
+    <h1 class="h1-strong" *ngIf="!artist._id else updateBlockTitle">Nuevo Artista</h1>
+    <ng-template #updateBlockTitle>
+        <h1 class="h1-strong">Editar artista</h1>
+    </ng-template>
+
+    <div class="alert alert-success" *ngIf="status=='success'">
+        Artista añadido!
+    </div>
+    <div class="alert alert-danger" *ngIf="status=='error'">
+        Error al añadir artista!
+    </div>
+    <form #artistForm="ngForm" class="col-lg-12">
+        <div class="form-group row">
+            <label for="nombre" class="col-lg-3 col-sm-3 col-form-label">Nombre:</label>
+            <input type="text" name="nombre" #nombre="ngModel" [(ngModel)]="artist.nombre" class="form-control col-lg-4 col-sm-4" id="nombre" required>
+            <div *ngIf="!nombre.valid && nombre.touched">
+                <span *ngIf="nombre.errors?.required" class="validation">El nombre es obligatorio.</span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="fechaNacimiento" class="col-lg-3 col-sm-3 col-form-label">Fecha Creación:</label>
+            <input type="date" name="fechaNacimiento" #fechaNacimiento="ngModel" [(ngModel)]="artist.fechaNacimiento" class="form-control col-lg-4 col-sm-4" id="fechaNacimiento" required>
+            <div *ngIf="!fechaNacimiento.valid && fechaNacimiento.touched">
+                <span *ngIf="fechaNacimiento.errors?.required" class="validation">La fecha de creación es obligatoria.</span>
+            </div>
+            <span *ngIf="status=='errorFecha'" class="validation">La fecha de creación debe ser anterior a la de hoy.</span>
+
+        </div>
+
+        <div class="form-group row">
+            <label for="nacionalidad" class="col-lg-3 col-sm-3 col-form-label">Nacionalidad:</label>
+            <input type="text" name="nacionalidad" #nacionalidad="ngModel" [(ngModel)]="artist.nacionalidad" class="form-control col-lg-4 col-sm-4" id="nacionalidad" required>
+            <div *ngIf="!nacionalidad.valid && nacionalidad.touched">
+                <span *ngIf="nacionalidad.errors?.required" class="validation">La nacionalidad es obligatoria.</span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="imagen" class="col-lg-3 col-sm-3 col-form-label">Imagen:</label>
+            <input type="text" name="imagen" #imagen="ngModel" [(ngModel)]="artist.imagen" class="form-control col-lg-4 col-sm-4" id="imagen" required pattern="^(http(s?):)?([/|.|\w|\s|-])*\.(?:jpg|png)">
+            <div *ngIf="!imagen.valid && imagen.touched">
+                <span *ngIf="imagen.errors?.required" class="validation">La imagen es obligatoria.</span>
+                <span *ngIf="imagen.errors?.pattern" class="validation">La imagen debe ser una URL.</span>
+
+            </div>
+        </div>
+
+        <div class="col text-center">
+            <input type="submit" value="Añadir" class="btn btn-primary" [disabled]="!artistForm.form.valid" (click)="create()" *ngIf="!artist._id else updateBlock">
+
+            <ng-template #updateBlock>
+                <input type="submit" value="Guardar" class="btn btn-primary" [disabled]="!artistForm.form.valid" (click)="update()">
+            </ng-template>
+
+            <input type="submit" value="Atrás" class="btn btn-primary" [routerLink]="['/artists']">
+
+        </div>
+    </form>
+</div>

@@ -1,0 +1,103 @@
+<div class="row" id="artistas">
+    <div class="col-lg-8">
+        <h1 class="h1-strong">
+            Artistas
+            <a class="btn btn-primary" type="submit" id="buscarBtn" [routerLink]="['/artist']">
+                <i class="fa fa-plus" aria-hidden="true"></i> Añadir artista
+            </a>
+        </h1>
+
+
+
+        <div class="people" *ngIf="artists?.length != 0">
+            <div *ngFor="let artist of artists" class="item-artist">
+                <div class="card card default">
+                    <div class="card-body">
+                        <div class="imagen-artist pull-left">
+                            <a href="#">
+                                <img src="{{artist.imagen}}" *ngIf="artist.imagen" />
+                                <img src="assets/user.png" class="imagen-default" *ngIf="!artist.imagen" />
+
+                            </a>
+
+                        </div>
+                        <div class="artist-titulo pull-left">
+                            <p class="titulo">
+                                {{artist.nombre}} &nbsp;|&nbsp; <span class="nbs">{{artist.nacionalidad}} &nbsp;|&nbsp;</span> F.Creación: {{artist.fechaNacimiento}}
+
+                            </p>
+                        </div>
+                        <div class="artists-acciones pull-right">
+                            <div class="acciones-songs">
+                                <a class="btn btn-primary" type="submit" id="editBtn" [routerLink]="['/artist',artist._id]">
+                                    <i class="fa fa-pencil-square-o " aria-hidden="true"></i>
+                                </a>
+
+                                <!-- Button trigger modal -->
+                                <a href="#myModal{{artist._id}}" class="btn btn-danger" data-toggle="modal" role="button">
+                                    <i class="fa fa-trash " aria-hidden="true"></i>
+                                </a>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="myModal{{artist._id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLongTitle">¿Está seguro de eliminar este artista?</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Si borras el artista: {{artist.nombre}}, ya no aparecerá en el sistema.
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                                <button type="button" class="btn btn-primary" (click)="delete(artist._id)" data-dismiss="modal">Eliminar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+            <ul class="pagination pull-right" *ngIf="!query">
+                <li class="page-item" *ngIf="page > 1"><a class="page-link" [routerLink]="['/artists',prev_page]">Anterior</a>
+                </li>
+                <li class="page-item" *ngIf="pages != page"><a class="page-link" [routerLink]="['/artists',next_page]">Siguiente</a></li>
+            </ul>
+
+            <ul class="pagination pull-right" *ngIf="query">
+                <li class="page-item" *ngIf="page > 1"><a class="page-link" [routerLink]="['/artists',query,prev_page]">Anterior</a>
+                </li>
+                <li class="page-item" *ngIf="pages != page"><a class="page-link" [routerLink]="['/artists',query,next_page]">Siguiente</a></li>
+            </ul>
+        </div>
+        <p class="messagesEmpty" *ngIf="artists?.length == 0"> No hay artistas.</p>
+
+
+    </div>
+    <div class="col-lg-4">
+        <h1 class="h1-strong">Buscar</h1>
+        <div class="alert alert-danger" *ngIf="status=='error'">
+            Login erróneo!
+        </div>
+        <form #searchArtistForm="ngForm" class="col-lg-12 mb-2">
+            <div class="row">
+                <input type="text" name="query" class="form-control col-lg-9 col-sm-9" [(ngModel)]="query" id="query" placeholder="Nombre de artista" required>
+                <a class="btn btn-primary col-lg-1 col-sm-1" id="buscarBtn" [routerLink]="['/artists',query,1]" *ngIf="query.trim().length != 0">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                </a>
+                <a class="btn btn-primary col-lg-1 col-sm-1" id="buscarBtn" [routerLink]="['/artists']" *ngIf="query.trim().length == 0">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

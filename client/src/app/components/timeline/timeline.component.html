@@ -1,0 +1,232 @@
+<div class="row" id="canciones">
+    <div class="col-md-3">
+
+        <div class="card profile-card-1">
+            <img src="{{url+'get-image-user/'+identity.avatar}}" *ngIf="identity.avatar" class="profile" />
+            <img src="assets/user.png" class="profile" *ngIf="!identity.avatar" />
+            <div class="card-content">
+                <h3>{{identity.username}}<small>{{identity.role}}</small></h3>
+                <div class="icon-block">
+                    <a [routerLink]="['/siguiendo',identity._id,1]"> Seguidos {{stats.following}}</a> &nbsp;|&nbsp;
+                    <a [routerLink]="['/seguidores',identity._id,1]"> Seguidores {{stats.followed}}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <h1 class="h1-strong">
+            Actividad
+        </h1>
+        <div id="publications" *ngIf="publications?.length >0">
+            <div *ngFor="let publication of publications" class="item-publication">
+                <div class="card card-default">
+                    <div class="card-body">
+                        <div class="image-publication pull-left">
+                            <a href="#myModalDetails{{publication._id}}" data-toggle="modal" role="button">
+                                <img src="{{publication.song.imagen}}" *ngIf="publication.song">
+                                <img src="{{url+'get-image-user/'+publication.user.avatar}}" *ngIf="publication.file">
+
+                            </a>
+
+                        </div>
+
+                        <div class="pub-name pull-left">
+                            <p class="name-pub">
+                                <a [routerLink]="['/profile',publication.user._id]">{{publication.user.username}}</a> &nbsp;|&nbsp;
+                                <span class="date">
+                                    {{(publication.created_at | amFromUnix) | amLocale:'es'|amTimeAgo}}
+                                </span>
+                            </p>
+                            <p class="publication-text">
+                                {{publication.text}}
+                            </p>
+                        </div>
+                        <div class="acciones">
+                            <!-- Button trigger modal -->
+                            <a href="#myModal{{publication._id}}" class="btn btn-danger" data-toggle="modal" role="button" *ngIf="identity._id == publication.user._id">
+                                <i class="fa fa-trash " aria-hidden="true"></i>
+                            </a>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="myModal{{publication._id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" *ngIf="identity.role == 'ROLE_ADMIN'">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLongTitle">¿Está seguro de eliminar esta publicación?</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Si borras la publicación, ya no aparecerá en tu listado de actividad.
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                            <button type="button" class="btn btn-primary" (click)="deletePublication(publication._id)" data-dismiss="modal">Eliminar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="myModalDetails{{publication._id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content" *ngIf="publication.song && !publication.file">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">{{publication.song.titulo}}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="pause()">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container-fluid">
+                                    <div class="col-md-12 text-center">
+                                        <div class="imagen-song-modal">
+                                            <img src="{{publication.song.imagen}}" *ngIf="publication.song.imagen" alt="song-image" />
+                                            <img src="assets/user.png" alt="song-image" *ngIf="!publication.song.imagen" />
+                                        </div>
+
+                                        <div class="datos-modal">
+                                            <hr> F.Lanzamiento : {{publication.song.fechaLanzamiento}} &nbsp; Artista : {{publication.song.artist.nombre}}
+                                            <hr>
+                                            <iframe class="e2e-iframe-trusted-src" id="reproductor" [src]="getSantizeUrl(publication.song.url)" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="pause()">Atrás</button>
+                            </div>
+                        </div>
+
+                        <div class="modal-content" *ngIf="publication.file && !publication.song">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">{{publication.file.titulo}}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="pause()">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container-fluid">
+                                    <div class="col-md-12 text-center">
+                                        <div class="audio">
+                                            <audio controls class="audio-track" id="reproductor">
+                                                <source src="{{url + 'get-track/'+publication.file.file}}" type="audio/mpeg">
+                                                Tu navegador no soporta el audio.
+                                            </audio>
+                                        </div>
+                                        <div class="datos-modal">
+                                            <hr>Artista : {{publication.user.username}} &nbsp;
+                                            <hr>
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="pause()">Atrás</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-lg-12 text-center" *ngIf="total > publications.length">
+                <p>
+
+                    <button class="btn" (click)="viewMore()" *ngIf="!noMore"><img src="assets/seleccion-de-la-guitarra.png" class="icono"></button>
+                </p>
+            </div>
+        </div>
+        <p *ngIf="publications?.length==0" class="messagesEmpty">No hay actividad.</p>
+    </div>
+    <div class="col-md-3">
+
+        <div class="card top-card-1">
+            <h5 class="card-header">Top canciones</h5>
+
+            <div id="tops" *ngIf="topPublications?.length >0">
+                <div *ngFor="let top of topPublications" class="item-top">
+                    <div class="card card-default">
+                        <div class="card-body">
+                            <div class="image-top pull-right">
+
+                                <img src="{{top._id.imagen}}" *ngIf="top._id.imagen">
+                                <!--<img src="{{url+'get-image-user/'+top.user.avatar}}" *ngIf="top._id.imagen">-->
+
+                            </div>
+
+                            <div class="top-titulo pull-left">
+                                <p class="titulo">
+                                    {{top._id.titulo}}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <p *ngIf="topPublications?.length==0" class="messagesEmpty">No hay publicaciones.</p>
+
+
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="myModalInfo" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Información</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                    </div>
+                    <div class="modal-body">
+                        El apartado de amigos recomendados, se basa en las publicaciones de canciones, es decir, apareceran los usuarios que recomienden las mismas canciones que tú.
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="card top-card-1">
+            <h5 class="card-header">
+                ¿A quién seguir? <a href="#myModalInfo" id="buscarBtn" data-toggle="modal" role="button"><i class="fa fa-info-circle" aria-hidden="true" style="color: black;"></i></a>
+            </h5>
+
+            <div id="users" *ngIf="users?.length >0">
+                <div *ngFor="let user of users" class="item-top">
+                    <div class="card card-default">
+                        <div class="card-body">
+
+                            <div class="image-top pull-right">
+                                <img src="{{url+'get-image-user/'+user.avatar}}" *ngIf="user.avatar">
+                                <!--<img src="{{url+'get-image-user/'+top.user.avatar}}" *ngIf="top._id.imagen">-->
+
+                            </div>
+
+                            <div class="top-titulo pull-left">
+                                <p class="titulo">
+                                    {{user.username}}
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

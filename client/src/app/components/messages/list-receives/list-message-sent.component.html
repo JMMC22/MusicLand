@@ -1,0 +1,62 @@
+<div class="row" id="mensaje">
+    <div class="col-lg-4">
+        <h1 class="h1-strong">Mensajes</h1>
+        <div class="sidebar-admin">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+
+                <a class="nav-link" id="v-pills-send-tab" data-toggle="pill" [routerLink]="['/message']" role="presentation" aria-controls="v-pills-home" aria-selected="false">Enviar Mensaje</a>
+                <a class="nav-link" id="v-pills-rec-tab" data-toggle="pill" [routerLink]="['/messages-received']" role="presentation" aria-controls="v-pills-profile" aria-selected="false">Mensajes Recibidos <span
+                        class="badge badge-light">{{count}}</span></a>
+                <a class="nav-link active" id="v-pills-sends-tab" data-toggle="pill" [routerLink]="['/messages-sent']" role="presentation" aria-controls="v-pills-messages" aria-selected="true">Mensajes Enviados</a>
+
+            </div>
+
+        </div>
+
+    </div>
+    <div class="col-lg-8">
+
+        <div class="col-lg-10">
+            <h3 class="h3-strong">Mensajes Enviados</h3>
+
+            <div class="messages" *ngIf="messages?.length > 0">
+                <div *ngFor="let message of messages" class="item-message">
+                    <div class="card card default">
+                        <div class="card-body">
+                            <div class="image-user pull-left">
+
+                                <img src="{{url+'get-image-user/'+message.emitter.avatar}}" *ngIf="message.emitter.avatar" />
+                                <img src="assets/user.png" class="avatar-default" *ngIf="!message.emitter.avatar" />
+
+                            </div>
+                            <div class="user-name pull-left">
+                                <p class="name-username">
+                                    {{message.emitter.username}} &nbsp;|&nbsp;
+                                    <span class="date">
+                                        {{(message.created_at | amFromUnix) | amLocale:'es'|amTimeAgo}}
+                                    </span> &nbsp;|&nbsp;
+                                    <span class="enviadoA">
+                                        Enviado a <a
+                                            [routerLink]="['/profile',message.receiver._id]">{{message.receiver.username}}</a>
+                                    </span>
+
+                                </p>
+                                <p class="texto">
+                                    {{message.text}}
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <ul class="pagination pull-right">
+                    <li class="page-item" *ngIf="page > 1"><a class="page-link" [routerLink]="['/messages-sent',prev_page]">Anterior</a></li>
+                    <li class="page-item" *ngIf="pages != page"><a class="page-link" [routerLink]="['/messages-sent',next_page]">Siguiente</a></li>
+                </ul>
+            </div>
+
+            <p class="messagesEmpty" *ngIf="messages?.length == 0"> No hay mensajes.</p>
+
+        </div>
+    </div>
+</div>

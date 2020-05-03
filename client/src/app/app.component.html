@@ -1,0 +1,78 @@
+<nav class="navbar navbar-expand-lg" id="nav">
+
+    <div class="navbar-brand" id="title"><img src="assets/seleccion-de-la-guitarra.png" class="icono" alt="logo">Musicland</div>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <em class="fa fa-bars"></em>
+  </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav" *ngIf="identity">
+            <li class="nav-item">
+                <a class="nav-link" [routerLink]="['/timeline']">
+                    <em class="fa fa-bars"></em> Actividad
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [routerLink]="['/buscar-gente']">
+                    <em class="fa fa-users"></em> Personas
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" [routerLink]="['/songs']">
+                    <em class="fa fa-music"></em> Canciones
+                </a>
+            </li>
+            <li class="nav-item" *ngIf="identity.role == 'ROLE_ADMIN'">
+                <a class="nav-link" [routerLink]="['/artists']">
+                    <em class="fa fa-star"></em> Artistas
+                </a>
+            </li>
+            <li class="nav-item" *ngIf="identity.role == 'ROLE_ADMIN'">
+                <a class="nav-link" [routerLink]="['/tracks']">
+                    <em class="fa fa-database"></em> Pistas
+                </a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto" *ngIf="identity">
+
+            <li class="nav-item">
+                <a class="nav-link" [routerLink]="['/message']">
+                    <em class="fa fa-envelope"></em> Mensajes <span class="badge badge-light">{{count}}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [routerLink]="['/profile',identity._id]">
+                    <em class="fa fa-id-card"></em> Perfil
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" [routerLink]="" (click)="logout()">
+                    <em class="fa fa-sign-out"></em> Cerrar Sesión</a>
+            </li>
+        </ul>
+
+        <ul class="navbar-nav ml-auto" *ngIf="!identity">
+            <li class="nav-item active">
+                <a class="nav-link" [routerLink]="['/home']">
+                    <em class="fa fa-home"></em> Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item mr-auto">
+                <a class="nav-link" [routerLink]="['/login']">
+                    <em class="fa fa-sign-in"></em> Entrar
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [routerLink]="['/register']">
+                    <em class="fa fa-user-plus"></em> Registro
+                </a>
+            </li>
+
+        </ul>
+    </div>
+</nav>
+
+
+<router-outlet></router-outlet>
