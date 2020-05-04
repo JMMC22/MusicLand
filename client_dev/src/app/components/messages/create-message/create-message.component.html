@@ -1,0 +1,49 @@
+<div class="row" id="mensaje">
+    <div class="col-lg-4">
+        <h1 class="h1-strong">Mensajes</h1>
+        <div class="sidebar-admin">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+
+                <a class="nav-link active" id="v-pills-send-tab" data-toggle="pill" [routerLink]="['/message']" role="presentation" aria-controls="v-pills-home" aria-selected="true">Enviar Mensaje</a>
+                <a class="nav-link" id="v-pills-rec-tab" data-toggle="pill" [routerLink]="['/messages-received']" role="presentation" aria-controls="v-pills-profile" aria-selected="false">Mensajes Recibidos <span class="badge badge-light">{{count}}</span></a>
+                <a class="nav-link" id="v-pills-sends-tab" data-toggle="pill" [routerLink]="['/messages-sent']" role="presentation" aria-controls="v-pills-messages" aria-selected="false">Mensajes Enviados</a>
+
+            </div>
+
+        </div>
+
+    </div>
+    <div class="col-lg-8">
+
+        <div class="col-lg-10">
+            <h3 class="h3-strong">
+                Enviar Mensaje
+            </h3>
+            <div class="alert alert-success" *ngIf="status=='success'">
+                Mensaje enviado!
+            </div>
+            <div class="alert alert-danger" *ngIf="status=='error'">
+                Mensaje no enviado!
+            </div>
+            <form #messageForm="ngForm" (ngSubmit)="onSubmit(messageForm)">
+                <p>
+                    <label>Para:  <span style="font-size: 12px;color: gray;">**Solo podrás enviar mensajes a usuarios seguidores**</span></label>
+                    <select *ngIf="follows" name="receiver" #receiver="ngModel" [(ngModel)]="message.receiver" class="form-control" required>
+                        <option *ngFor="let follow of follows" value="{{follow.user._id}}">
+                            {{follow.user.username}}
+                    </select>
+                </p>
+                <p>
+                    <label>Mensaje</label>
+                    <textarea name="text" #text="ngModel" [(ngModel)]="message.text" class="form-control" required></textarea>
+                    <span *ngIf="!text.valid && text.touched">
+                        EL mensaje no puede ir vacío.
+                    </span>
+                </p>
+
+                <input type="submit" value="Enviar" class="btn btn-success" id="messageBtn" [disabled]="!messageForm.form.valid" />
+            </form>
+
+        </div>
+    </div>
+</div>
