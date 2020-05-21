@@ -1,0 +1,29 @@
+{
+    "name": "red-social",
+    "version": "1.0.0",
+    "description": "Trabajo fin de grado MEAN",
+    "main": "index.js",
+    "scripts": {
+        "start": "nodemon index.js",
+        "test": "mocha"
+    },
+    "author": "Jose Maria Marquez",
+    "license": "MIT",
+    "dependencies": {
+        "bcrypt-nodejs": "0.0.3",
+        "body-parser": "^1.19.0",
+        "chai": "^4.2.0",
+        "chai-http": "^4.3.0",
+        "connect-multiparty": "^2.2.0",
+        "express": "^4.17.1",
+        "jwt-simple": "^0.5.6",
+        "mocha": "^7.1.2",
+        "moment": "^2.24.0",
+        "mongoose": "^5.9.7",
+        "mongoose-pagination": "^1.0.0",
+        "neat-csv": "^5.2.0"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.2"
+    }
+}

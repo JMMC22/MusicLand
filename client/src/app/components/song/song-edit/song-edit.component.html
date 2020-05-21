@@ -1,0 +1,71 @@
+<div class="col-lg-8">
+    <h1 class="h1-strong" *ngIf="!song._id else updateBlockTitle">Nueva Canción</h1>
+    <ng-template #updateBlockTitle>
+        <h1 class="h1-strong">Editar canción</h1>
+    </ng-template>
+    <div class="alert alert-success" *ngIf="status=='success'">
+        Canción añadida!
+    </div>
+    <div class="alert alert-danger" *ngIf="status=='error'">
+        Error al añadir canción!
+    </div>
+    <form #songForm="ngForm" class="col-lg-12">
+        <div class="form-group row">
+            <label for="titulo" class="col-lg-3 col-sm-3 col-form-label">Titulo:</label>
+            <input type="text" name="titulo" #titulo="ngModel" [(ngModel)]="song.titulo" class="form-control col-lg-4 col-sm-4" id="titulo" placeholder="Titulo" required maxlength="50">
+            <div *ngIf="!titulo.valid && titulo.touched">
+                <span *ngIf="titulo.errors?.required" class="validation">El titulo es obligatorio.</span>
+                <span *ngIf="titulo.errors?.maxlength" class="validation">El titulo debe tener como máximo 50 caracteres.</span>
+
+            </div>
+
+        </div>
+        <div class="form-group row">
+            <label for="fechaLanzamiento" class="col-lg-3 col-sm-3 col-form-label">Fecha Lanzamiento:</label>
+            <input type="date" name="fechaLanzamiento" #fechaLanzamiento="ngModel" [(ngModel)]="song.fechaLanzamiento" class="form-control col-lg-4 col-sm-4" id="fechaLanzamiento" required>
+            <div *ngIf="!fechaLanzamiento.valid && fechaLanzamiento.touched">
+                <span *ngIf="fechaLanzamiento.errors?.required" class="validation">La fecha de lanzamiento es obligatoria.</span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="imagen" class="col-lg-3 col-sm-3 col-form-label">Imagen:</label>
+            <input type="text" name="imagen" #imagen="ngModel" [(ngModel)]="song.imagen" class="form-control col-lg-4 col-sm-4" id="imagen" pattern="^(https?:\/\/.*\.(?:png|jpg))" placeholder="...jpg .png" required>
+            <div *ngIf="!imagen.valid && imagen.touched">
+                <span *ngIf="imagen.errors?.required" class="validation">La imagen es obligatoria.</span>
+                <span *ngIf="imagen.errors?.pattern" class="validation">La imagen debe ser una URL.</span>
+
+            </div>
+
+        </div>
+
+        <div class="form-group row">
+            <label for="url" class="col-lg-3 col-sm-3 col-form-label">URI Spotify:</label>
+            <input type="text" name="url" #url="ngModel" [(ngModel)]="song.url" class="form-control col-lg-4 col-sm-4" id="url" placeholder="spotify:track:..." pattern="(spotify:track:)(\w){22}" required>
+            <div *ngIf="!url.valid && url.touched">
+                <span *ngIf="url.errors?.required" class="validation">La URI es obligatoria.</span>
+                <span *ngIf="url.errors?.pattern" class="validation">No cumple el patrón de URI.</span>
+
+            </div>
+
+        </div>
+        <div class="form-group row">
+            <label for="artist" class="col-lg-3 col-sm-3 col-form-label">Seleccionar Artista:</label>
+            <select class="form-control col-lg-4 col-sm-4" id="artist" name="artist" #artist="ngModel" [(ngModel)]="song.artist" required>
+                <option *ngFor="let artist of artists" value="{{artist._id}}">{{artist.nombre}}
+                </option>
+            </select>
+            <span *ngIf="!artist.valid && artist.touched" class="validation">Debes seleccionar un artista.</span>
+
+        </div>
+        <div class="col text-center">
+            <input type="submit" value="Añadir" class="btn btn-primary" [disabled]="!songForm.form.valid" (click)="create()" *ngIf="!song._id else updateBlock">
+
+            <ng-template #updateBlock>
+                <input type="submit" value="Guardar" class="btn btn-primary" [disabled]="!songForm.form.valid" (click)="update()">
+            </ng-template>
+
+            <input type="submit" value="Atrás" class="btn btn-primary" [routerLink]="['/songs']">
+
+        </div>
+    </form>
+</div>

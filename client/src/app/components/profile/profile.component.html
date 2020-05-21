@@ -1,0 +1,227 @@
+<div class="alert alert-success alert-dismissible fade show alert-pub" role="alert" *ngIf="status=='sent'">
+    <strong>Pista compartida!!</strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="alert alert-danger alert-dismissible fade show alert-pub" role="alert" *ngIf="status=='error-sent'">
+    <strong>Error al compartir pista.</strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="row" id="canciones">
+    <div class="col-lg-3">
+        <h1 class="h1-strong">
+            Perfil
+            <a class="btn btn-primary" type="submit" id="buscarBtn" [routerLink]="['/edit-profile']" *ngIf="identity._id == user?._id">
+                <i class="fa fa-plus" aria-hidden="true"></i> Editar
+            </a>
+        </h1>
+
+
+        <div class="card profile-card-2">
+            <img src="{{url+'get-image-user/'+user.avatar}}" *ngIf="user?.avatar" class="profile" alt="imagen-usuario" />
+            <div class="card-content">
+                <h3>{{user?.username}}</h3>
+                <span class="badge badge-dark" *ngIf="followed">Te sigue</span>
+                <div class="icon-block">
+                    <a [routerLink]="['/siguiendo',user._id,1]"> Seguidos {{stats?.following}}</a> &nbsp;|&nbsp;
+                    <a [routerLink]="['/seguidores',user._id,1]"> Seguidores {{stats?.followed}}</a>
+                </div>
+
+                <div class="follow" *ngIf="identity?._id != user?._id">
+                    <button class="btn btn-primary" *ngIf="!following" (click)="follow(user._id)"> 
+                        <em class="fa fa-plus"></em>
+                        Seguir</button>
+                    <button type="button" class="btn" *ngIf="following" (mouseenter)="mouseEnter(user._id)" (mouseleave)="mouseLeave(user._id)" [class.btn-danger]="user._id == followUserOver" [class.btn-light]="user._id != followUserOver" (click)="unfollow(user._id)">
+                        <span *ngIf="user._id == followUserOver; else siguiendo">
+                            <em class="fa fa-times"></em>
+                            Dejar de Seguir
+                        </span>
+                        <ng-template #siguiendo>
+                            <em class="fa fa-check"></em>
+                            Siguiendo
+                        </ng-template>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="track-profile" class="card" *ngIf="identity._id == user._id">
+            <div class="card-header text-center">
+                <img src="assets/lista-de-reproduccion.png" class="icono" alt="icono">&nbsp;&nbsp;¿Quieres compartir tu música?
+            </div>
+            <div class="card-body text-center">
+                <p class="card-text">Si eres artista y quieres compartir tu música para darte a conocer, sube tu propia pista!!!</p>
+                <a href="#myModalTrack" id="buscarBtn" data-toggle="modal" role="button" class="btn btn-primary">
+                    Adelante!
+                </a>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="myModalTrack" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Añadir Pista</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="trackForm.reset();">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form #trackForm="ngForm" class="col-lg-12">
+
+                            <div class="form-group row">
+                                <label for="titulo" class="col-lg-2 col-sm-3 col-form-label">Titulo:</label>
+                                <input type="text" name="titulo" #titulo="ngModel" [(ngModel)]="track.titulo" class="form-control col-lg-5 col-sm-4" id="titulo" required maxlength="40">
+                                <span *ngIf="!titulo.valid && titulo.touched" class="validation">Titulo obligatorio.</span>
+                                <span *ngIf="titulo.errors?.maxlength" class="validation">El titulo debe tener como máximo 40 caracteres.</span>
+
+
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="Pista" class="col-lg-2 col-sm-3 col-form-label">Pista:</label>
+                                <input type="file" (change)="fileChangeEvent($event)" name="file" #file="ngModel" [(ngModel)]="track.file" class="col-lg-8 col-sm-4" required>
+                                <div *ngIf="!file.valid && file.touched">
+                                    <span *ngIf="file.errors?.required" class="validation">El archivo es obligatorio.</span>
+                                </div>
+                                <span *ngIf="status == 'errorRegex'" class="validation">El archivo debe ser del tipo .mp3.</span>
+
+                            </div>
+
+
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="trackForm.reset();">Atrás</button>
+                            <input type="submit" class="btn btn-primary" value="Enviar" data-dismiss="modal" [disabled]="!trackForm.form.valid" (click)="onSubmit(trackForm)">
+                        </form>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-lg-9">
+
+        <nav id="navProfile">
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active" id="nav-publications-tab" data-toggle="tab" href="#publications" role="tab" aria-controls="nav-publications" aria-selected="true">Actividad</a>
+                <a class="nav-item nav-link" id="nav-tracks-tab" data-toggle="tab" href="#tracks" role="tab" aria-controls="nav-tracks" aria-selected="false">Pistas</a>
+            </div>
+        </nav>
+
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="publications" role="tabpanel" aria-labelledby="nav-publications-tab">
+                <div class="publications" *ngIf="publications?.length!=0">
+                    <div *ngFor="let publication of publications" class="item-publication">
+                        <div class="card card-default">
+                            <div class="card-body">
+                                <div class="card-body">
+                                    <div class="image-publication-profile">
+                                        <a href="#myModalDetails{{publication._id}}" data-toggle="modal" role="button">
+                                            <img src="{{publication.song.imagen}}" *ngIf="publication.song" alt="imagen-cancion">
+                                            <img src="{{url+'get-image-user/'+publication.user.avatar}}" *ngIf="publication.file" alt="imagen-cancion">
+                                        </a>
+                                    </div>
+
+                                    <div class="pub-name">
+                                        <p class="name-pub-profile">
+                                            {{publication.user.username}} &nbsp;|&nbsp;
+                                            <span class="date">
+                                            {{(publication.created_at | amFromUnix) | amLocale:'es'|amTimeAgo}}
+                                        </span>
+                                        </p>
+                                        <p class="publication-text-profile">
+                                            {{publication.text}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal -->
+                        <div class="modal fade" id="myModalDetails{{publication._id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content" *ngIf="publication.song && !publication.file">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLongTitle">{{publication.song.titulo}}</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="container-fluid">
+                                            <div class="col-md-12 text-center">
+                                                <div class="imagen-song-modal">
+                                                    <img src="{{publication.song.imagen}}" *ngIf="publication.song.imagen" alt="song-image" />
+                                                    <img src="assets/user.png" alt="song-image" *ngIf="!publication.song.imagen" />
+                                                </div>
+
+                                                <div class="datos-modal">
+                                                    <hr> F.Lanzamiento : {{publication.song.fechaLanzamiento}} &nbsp; Artista : {{publication.song.artist.nombre}}
+                                                    <hr>
+                                                    <iframe class="e2e-iframe-trusted-src" [src]="getSantizeUrl(publication.song.url)" title="spotifyframe" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Atrás</button>
+                                    </div>
+                                </div>
+
+                                <div class="modal-content" *ngIf="publication.file && !publication.song">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLongTitle">{{publication.file.titulo}}</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="pause()">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="container-fluid">
+                                            <div class="col-md-12 text-center">
+                                                <div class="audio">
+                                                    <audio controls class="audio-track" id="reproductor">
+                                                        <source src="{{url + 'get-track/'+publication.file.file}}" type="audio/mpeg">
+                                                        Tu navegador no soporta el audio.
+                                                    </audio>
+                                                </div>
+                                                <div class="datos-modal">
+                                                    <hr>Artista : {{publication.user.username}} &nbsp;
+                                                    <hr>
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="pause()">Atrás</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="col-lg-12 text-center" *ngIf="total > publications?.length">
+                        <p>
+
+                            <button class="btn" (click)="viewMore()" *ngIf="!noMore"><img src="assets/seleccion-de-la-guitarra.png" class="icono" alt="imagen-pua"></button>
+                        </p>
+                    </div>
+
+                </div>
+                <p *ngIf="publications?.length==0" class="messagesEmpty">No hay actividad.</p>
+
+            </div>
+            <div class="tab-pane fade" id="tracks" role="tabpanel" aria-labelledby="nav-tracks-tab">
+                <app-track [user]='id'></app-track>
+            </div>
+        </div>
