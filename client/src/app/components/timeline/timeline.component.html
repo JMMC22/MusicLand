@@ -1,6 +1,6 @@
 <div class="row" id="canciones">
-    <div class="col-lg-3">
 
+    <div class="col-lg-3">
         <div class="card profile-card-1">
             <img src="{{url+'get-image-user/'+identity.avatar}}" *ngIf="identity.avatar" class="profile" alt="imagen-usuario" />
             <img src="assets/user.png" class="profile" *ngIf="!identity.avatar" alt="imagen-usuario" />
@@ -17,6 +17,53 @@
         <h1 class="h1-strong">
             Actividad
         </h1>
+        <div class="card card-default best">
+            <div class="card-header">
+                <img src="assets/podio.png" class="icono" alt="icono"><a href="#myModalInfoPodio" data-toggle="modal" role="button"><i class="fa fa-info-circle" aria-hidden="true" style="color: black;"></i></a>
+                <!-- Modal -->
+                <div class="modal fade" id="myModalInfoPodio" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">Información</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                            </div>
+                            <div class="modal-body">
+                                El top usuarios está basado en los usuarios que más comparten las pistas de otros usuarios, es decir, cuantas más pistas compartas de otros usuarios, más arriba del podio estarás.
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="user-podio col-lg-4">
+                        <p class="statsUser"><img src="assets/exito.png" class="icono-first" alt="icono"></p>
+                        <div class="best-stats" *ngIf="first">
+                            <a [routerLink]="['/profile',first._id]"><img src="{{url+'get-image-user/'+first.avatar}}" *ngIf="first.avatar" alt="imagen-usuario"></a>
+                        </div>
+                    </div>
+                    <div class="user-podio col-lg-4">
+                        <p class="statsUser"><img src="assets/plata.png" class="icono-first" alt="icono"></p>
+                        <div class="best-stats" *ngIf="second">
+                            <a [routerLink]="['/profile',second._id]"><img src="{{url+'get-image-user/'+second.avatar}}" *ngIf="second.avatar" alt="imagen-usuario"></a>
+                        </div>
+                    </div>
+                    <div class="user-podio col-lg-4">
+                        <p class="statsUser"><img src="assets/bronce.png" class="icono-first" alt="icono"></p>
+                        <div class="best-stats" *ngIf="third">
+                            <a [routerLink]="['/profile',third._id]"><img src="{{url+'get-image-user/'+third.avatar}}" *ngIf="third.avatar" alt="imagen-usuario"></a>
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
         <div id="publications" *ngIf="publications?.length >0">
             <div *ngFor="let publication of publications" class="item-publication">
                 <div class="card card-default">
@@ -151,7 +198,7 @@
     <div class="col-lg-3">
 
         <div class="card top-card-1">
-            <h5 class="card-header">Top canciones</h5>
+            <h5 class="card-header">Canciones más compartidas</h5>
 
             <div id="tops" *ngIf="topPublications?.length >0">
                 <div *ngFor="let top of topPublications" class="item-top">
@@ -228,3 +275,4 @@
         </div>
     </div>
 </div>
+<!-- Modal -->

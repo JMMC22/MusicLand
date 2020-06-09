@@ -193,6 +193,7 @@ function findByNombre(req, res) {
 
 }
 
+
 module.exports = {
 
     artistSave,
@@ -202,6 +203,4 @@ module.exports = {
     getArtistsPagination,
     deleteArtist,
     findByNombre
-
-
 }

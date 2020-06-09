@@ -24,6 +24,14 @@ export class MessageService {
 
   }
 
+  message100(token): Observable<any> {
+    let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', token);
+    let params;
+
+    return this._http.post(this.url + 'message100', params, { headers: headers });
+
+  }
+
 
   getReceivesMessages(token, page = 1): Observable<any> {
     let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', token);
@@ -41,13 +49,22 @@ export class MessageService {
 
     let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', token);
 
-    return this._http.get(this.url +'unvieweds', { headers: headers });
+    return this._http.get(this.url + 'unvieweds', { headers: headers });
+
+
+  }
+
+  getMessagesUnviewedAndNotify(token): Observable<any> {
+
+    let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', token);
+
+    return this._http.get(this.url + 'unnotify', { headers: headers });
 
 
   }
 
   setMessagesViewed(token, message): Observable<any> {
-    
+
     let params = JSON.stringify(message);
     let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', token);
 

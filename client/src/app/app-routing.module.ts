@@ -19,6 +19,9 @@ import { EditArtistComponent } from './components/artist/edit-artist/edit-artist
 import { ListTrackComponent } from './components/track/list-track/list-track.component';
 import { RoleGuard } from './services/role.guard';
 import { FollowsComponent } from './components/follows/follows.component';
+import { StadisticsComponent } from './components/stadistics/stadistics.component';
+import { StadisticsListComponent } from './components/stadistics/list/stadistics-list.component';
+import { StadisticsList7DaysComponent } from './components/stadistics/list_7days/stadistics-list-7Days.component';
 
 
 
@@ -51,6 +54,10 @@ const routes: Routes = [
   { path: 'edit-profile', component: UserEditComponent, canActivate: [UserGuard] },
   { path: 'tracks', component: ListTrackComponent, canActivate: [UserGuard, RoleGuard] },
   { path: 'tracks/:page', component: ListTrackComponent, canActivate: [UserGuard, RoleGuard] },
+  { path: 'stadistics', component: StadisticsComponent, canActivate: [UserGuard, RoleGuard] },
+  { path: 'stadistics-list', component: StadisticsListComponent, canActivate: [UserGuard, RoleGuard] },
+  { path: 'stadistics-list-follows', component: StadisticsListComponent, canActivate: [UserGuard, RoleGuard] },
+  { path: 'stadistics-list-7Days', component: StadisticsList7DaysComponent, canActivate: [UserGuard, RoleGuard] },
   { path: 'siguiendo/:id/:page', component: FollowsComponent, canActivate: [UserGuard] },
   { path: 'seguidores/:id/:page', component: FollowsComponent, canActivate: [UserGuard] }
 

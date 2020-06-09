@@ -44,7 +44,7 @@ async function loadInitialData() {
     });
 
     bcrypt.hash("admin", null, null, (err, hash) => {
-        const user1 = new User({ username: 'admin', email: 'admin@email.com', password: hash, role: 'ROLE_ADMIN', avatar: 'user.png' });
+        const user1 = new User({ username: 'admin', email: 'admin@email.com', password: hash, role: 'ROLE_ADMIN', avatar: 'admin.png' });
         user1.save();
     });
 

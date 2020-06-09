@@ -19,4 +19,5 @@ api.delete('/artist/:id', md_auth.ensureAuth, ArtistController.deleteArtist);
 
 
 
+
 module.exports = api;

@@ -30,6 +30,9 @@ import { ListTrackComponent } from './components/track/list-track/list-track.com
 import { SafePipe } from './services/safe.pipe';
 import { RoleGuard } from './services/role.guard';
 import { FollowsComponent } from './components/follows/follows.component';
+import { StadisticsComponent } from './components/stadistics/stadistics.component';
+import { StadisticsListComponent } from './components/stadistics/list/stadistics-list.component';
+import { StadisticsList7DaysComponent } from './components/stadistics/list_7days/stadistics-list-7Days.component';
 
 @NgModule({
   declarations: [
@@ -52,13 +55,16 @@ import { FollowsComponent } from './components/follows/follows.component';
     TrackComponent,
     ListTrackComponent,
     SafePipe,
-    FollowsComponent  ],
+    FollowsComponent,
+    StadisticsComponent,
+    StadisticsListComponent,
+    StadisticsList7DaysComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
-    MomentModule  ],
+    MomentModule],
   providers: [UserGuard, UserService, MessageService, RoleGuard],
   bootstrap: [AppComponent]
 })

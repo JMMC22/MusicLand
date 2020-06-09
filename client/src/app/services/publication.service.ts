@@ -43,4 +43,22 @@ export class PublicationService {
 
     return this._http.get(this.url + 'get-top3songs', { headers: headers });
   }
+
+  getBestUser(token): Observable<any> {
+    let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', token);
+
+    return this._http.get(this.url + 'get-best-user', { headers: headers });
+  }
+
+  getPublicationsPerUser(token): Observable<any> {
+    let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', token);
+
+    return this._http.get(this.url + 'get-publications-users', { headers: headers });
+  }
+
+  getSongsLast7Days(token): Observable<any> {
+    let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', token);
+
+    return this._http.get(this.url + 'get-7Days', { headers: headers });
+  }
 }

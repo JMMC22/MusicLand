@@ -395,6 +395,11 @@ body {
     margin-top: 40px;
     box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);
     height: 220px;
+    font-size: medium;
+}
+
+.top-card-1 .card-header {
+    font-size: medium;
 }
 
 .item-top .card {
@@ -543,6 +548,35 @@ body {
     .featurette-heading {
         margin-top: 7rem;
     }
+}
+
+.best .icono {
+    width: 50px;
+    margin: 0 auto;
+    display: block;
+}
+
+.best .icono-first {
+    width: 50px;
+    margin: 0 auto;
+}
+
+.best .best-stats img {
+    border-radius: 50%;
+    position: absolute;
+    left: 13%;
+    bottom: 17%;
+    width: 60px;
+    height: 60px;
+    opacity: 1;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 255, 255, 1);
+    /*-webkit-transform: translate(0%, 0%);
+    transform: translate(0%, 0%);*/
+}
+
+.user-podio {
+    text-align: center;
 }
 
 .profile-card-1 .card-content,

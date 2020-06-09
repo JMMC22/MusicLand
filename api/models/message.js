@@ -9,7 +9,9 @@ var MessageSchema = Schema({
     created_at: String,
     emitter: { type: Schema.ObjectId, ref: 'User' },
     receiver: { type: Schema.ObjectId, ref: 'User' },
-    viewed: Boolean
+    viewed: Boolean,
+    notify: Boolean
+
 
 });
 

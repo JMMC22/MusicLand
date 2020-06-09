@@ -9,6 +9,7 @@ var Publication = require('../models/publication');
 var User = require('../models/user');
 var Follow = require('../models/follow');
 var Song = require('../models/song');
+var Track = require('../models/track')
 
 
 
@@ -102,7 +103,7 @@ function getPublicationsUser(req, res) {
         user_id = req.params.user;
     }
 
-    Publication.find({ user: user_id }).sort('-created_at').populate('user song file').populate({ path: 'song', populate: { path: 'artist' } }).paginate(page, itemsPerPage, (err, publications, total) => {
+    Publication.find({ user: user_id }).sort('-created_at').populate('user song file').populate({ path: 'song', populate: { path: 'artist' } }).populate({ path: 'file', populate: { path: 'user' } }).paginate(page, itemsPerPage, (err, publications, total) => {
         if (err) return res.status(500).send({ message: 'Error en la petición.' });
 
         if (!publications) return res.status(404).send({ message: 'No hay publicaciones.' });
@@ -240,6 +241,128 @@ function getTop3CancionesPublicadas(req, res) {
         });
 }
 
+function bestUser(req, res) {
+
+    getUserTracks().then((value) => {
+        Publication.find({ file: { $ne: null } }).populate('file').exec((err, publications) => {
+            if (err) return res.status(500).send({ message: 'Error en la petición.' });
+
+            if (!publications) return res.status(404).send({ message: 'No hay canciones disponibles.' });
+
+            var users = [];
+
+            publications.forEach((publication) => {
+
+                if (publication.user.toString() != publication.file.user.toString()) {
+                    users.push(publication.user)
+                }
+            });
+
+            var cantidadUsers = users.reduce((cont, user) => {
+                cont[user] = (cont[user] || 0) + 1;
+                return cont;
+            }, {});
+
+            /*let max = Math.max.apply(null, Object.values(cantidadUsers));*/
+            let usersRes = Object.keys(cantidadUsers).sort(function(a, b) { return cantidadUsers[b] - cantidadUsers[a] }).slice(0, 3)
+
+            return res.status(200).send({ usersRes });
+        })
+    })
+}
+
+async function getUserTracks() {
+    var pistas = await Track.find().exec().then((tracks) => {
+        return tracks;
+    }).catch((err) => {
+        return handleError(err);
+    });
+
+    //Procesando artists que tienen cancion
+    var users = [];
+
+    pistas.forEach((track) => {
+        users.push(track.user);
+    });
+
+    return {
+        user_track: users
+    }
+}
+
+function getCountPublicationsUser(req, res) {
+
+    Publication.find().populate('user').exec((err, publications) => {
+        if (err) return res.status(500).send({ message: 'Error en la petición.' });
+
+        if (!publications) return res.status(404).send({ message: 'No hay canciones disponibles.' });
+
+        var users = [];
+
+        publications.forEach((publication) => {
+            users.push(publication.user.username)
+        });
+
+        var cantidadUsers = users.reduce((cont, user) => {
+            cont[user] = (cont[user] || 0) + 1;
+            return cont;
+        }, {});
+
+
+        var output = Object.entries(cantidadUsers).map(([user, cont]) => ({ user, cont }));
+
+        output.sort(function(a, b) {
+            if (a.cont < b.cont) {
+                return 1;
+            }
+            if (a.cont > b.cont) {
+                return -1;
+            }
+            // a must be equal to b
+            return 0;
+        });
+
+        return res.status(200).send({
+            output
+        });
+    })
+}
+
+function getLast7DaysPublications(req, res) {
+    var d = moment().subtract(7, 'days').unix()
+
+    Publication.aggregate([{
+        $match: {
+            'created_at': { $gte: d.toString() },
+            'song': { $ne: null }
+        }
+    }, {
+        $group: {
+            _id: "$song",
+            count: { $sum: 1 }
+
+
+        }
+    }]).sort({ count: -1 }).exec((err, publications) => {
+        if (err) return res.status(500).send({ message: 'Error en la petición.' });
+
+        if (!publications) return res.status(404).send({ message: 'No hay publicaciones disponibles.' });
+
+        Song.populate(publications, { path: '_id' }, (err, songs) => {
+            if (err) return res.status(500).send({ message: 'Error en la petición.' });
+
+            if (!songs) return res.status(404).send({ message: 'No hay canciones disponibles.' });
+
+            return res.status(200).send({ songs });
+
+
+
+        })
+
+
+    })
+}
+
 module.exports = {
 
     savePublication,
@@ -249,6 +372,9 @@ module.exports = {
     uploadImage,
     getImageFile,
     getPublicationsUser,
-    getTop3CancionesPublicadas
+    getTop3CancionesPublicadas,
+    bestUser,
+    getCountPublicationsUser,
+    getLast7DaysPublications
 
 }

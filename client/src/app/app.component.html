@@ -36,7 +36,11 @@
             </li>
         </ul>
         <ul class="navbar-nav ml-auto" *ngIf="identity">
-
+            <li class="nav-item" *ngIf="identity.role == 'ROLE_ADMIN'">
+                <a class="nav-link" [routerLink]="['/stadistics']" data-toggle="collapse" data-target=".navbar-collapse.show">
+                    <em class="fa fa-bar-chart"></em> Estadísticas
+                </a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" [routerLink]="['/message']" data-toggle="collapse" data-target=".navbar-collapse.show">
                     <em class="fa fa-envelope"></em> Mensajes <span class="badge badge-light">{{count}}</span>

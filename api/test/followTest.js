@@ -10,7 +10,6 @@ describe('Follow Controller', function() {
     chai.use(chaiHttp);
     var url = "http://localhost:3800/api";
     let userId;
-    let artistId;
     let token;
 
     before(function(done) {

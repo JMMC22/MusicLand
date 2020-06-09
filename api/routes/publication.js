@@ -17,6 +17,11 @@ api.delete('/publication/:id', md_auth.ensureAuth, PublicationController.deleteP
 api.post('/upload-image-pub/:id', [md_auth.ensureAuth, md_upload], PublicationController.uploadImage);
 api.get('/get-image-pub/:imagenFile', md_auth.ensureAuth, PublicationController.getImageFile);
 api.get('/get-top3songs', md_auth.ensureAuth, PublicationController.getTop3CancionesPublicadas);
+api.get('/get-best-user', md_auth.ensureAuth, PublicationController.bestUser);
+api.get('/get-publications-users', md_auth.ensureAuth, PublicationController.getCountPublicationsUser);
+api.get('/get-7days', md_auth.ensureAuth, PublicationController.getLast7DaysPublications);
+
+
 
 
 module.exports = api;

@@ -9,6 +9,8 @@ import { GLOBAL } from 'src/app/services/global';
 import { DomSanitizer } from '@angular/platform-browser';
 import { User } from 'src/app/models/user';
 import { DOCUMENT } from '@angular/common';
+import { MessageService } from 'src/app/services/message.service';
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-timeline',
   templateUrl: './timeline.component.html',
@@ -30,10 +32,13 @@ export class TimelineComponent implements OnInit {
   public unvieweds;
   public url;
   public users: User[];
+  public best: User[];
+  public message100;
+  public notify;
 
 
 
-  constructor(@Inject(DOCUMENT) private document: Document, private _userService: UserService, private _publicationService: PublicationService, private _router: Router, private _songService: SongService, private sanitizer: DomSanitizer) {
+  constructor(@Inject(DOCUMENT) private document: Document, private _userService: UserService, private _messageSErvice: MessageService, private _publicationService: PublicationService, private _router: Router, private _songService: SongService, private sanitizer: DomSanitizer) {
     this.identity = this._userService.getIdentity();
     this.token = this._userService.getToken();
     this.stats = this._userService.getStats();
@@ -49,6 +54,8 @@ export class TimelineComponent implements OnInit {
     this.getTop();
     this.getRecommendedUsers();
     this.getCounters(this.identity._id);
+    this.getBestUser();
+
   }
 
 
@@ -103,6 +110,24 @@ export class TimelineComponent implements OnInit {
       response => {
         if (response) {
           this.stats = response;
+          this._messageSErvice.getMessagesUnviewedAndNotify(this.token).subscribe((response) => {
+            if (response.unnotify == 0) {
+              if (this.stats.followed == '100') {
+                this._messageSErvice.message100(this.token).subscribe((response) => {
+                  Swal.fire({
+                    title: '¡Enhorabuena!',
+                    text: '¡Has conseguido 100 seguidores, has pasado a la versión premium de la aplicación!',
+                    imageUrl: '../../../assets/seleccion-de-la-guitarra.png',
+                    imageWidth: 200,
+                    imageHeight: 150,
+                    imageAlt: 'Custom image',
+
+                  })
+                })
+              }
+            }
+          })
+
         } else {
           this.status = "error";
         }
@@ -179,6 +204,26 @@ export class TimelineComponent implements OnInit {
   pause() {
     let audioPlayer = <HTMLVideoElement>document.getElementById("reproductor");
     audioPlayer.pause();
+  }
+
+  public first;
+  public second;
+  public third;
+
+  getBestUser() {
+    this._publicationService.getBestUser(this.token).subscribe(response => {
+      if (response.usersRes) {
+        if (response.usersRes.length != 0) {
+          this._userService.getUser(response.usersRes[0]).subscribe(response => this.first = response.user)
+          this._userService.getUser(response.usersRes[1]).subscribe(response => this.second = response.user)
+          this._userService.getUser(response.usersRes[2]).subscribe(response => this.third = response.user)
+        }
+
+      }
+
+    }, error => {
+      console.log(error)
+    })
   }
 
 

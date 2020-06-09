@@ -5,6 +5,7 @@ var moment = require('moment');
 
 
 var Message = require('../models/message');
+var User = require('../models/user');
 
 
 function saveMessage(req, res) {
@@ -19,6 +20,7 @@ function saveMessage(req, res) {
     message.text = params.text;
     message.created_at = moment().unix();
     message.viewed = false;
+    message.notify = false;
 
     message.save((err, messageStored) => {
         if (err) return res.status(500).send({ message: "Error petición." })
@@ -28,6 +30,36 @@ function saveMessage(req, res) {
         return res.status(200).send({ message: messageStored });
     })
 }
+
+function saveMessage100(req, res) {
+    User.findOne({ username: 'admin' }, (err, admin) => {
+        if (err) return res.status(500).send({ message: "Error petición." })
+        if (!admin) return res.status(404).send({ message: "Error al enviar mensaje." })
+
+        var message = new Message();
+
+        message.emitter = admin._id;
+        message.receiver = req.user.sub;
+        message.text = 'Enhorabuena has llegado a los 100 seguidores!!!'
+        message.created_at = moment().unix();
+        message.viewed = false;
+        message.notify = true;
+
+        message.save((err, messageStored) => {
+            if (err) return res.status(500).send({ message: "Error petición." })
+
+            if (!messageStored) return res.status(404).send({ message: "Error al enviar mensaje." })
+
+            return res.status(200).send({ message: messageStored });
+        })
+
+
+    })
+
+
+}
+
+
 
 function getRecMessages(req, res) {
     var userId = req.user.sub;
@@ -82,6 +114,17 @@ function unviewedMessages(req, res) {
     })
 }
 
+function unviewedAndNotifyMessages(req, res) {
+    var userId = req.user.sub;
+
+    Message.countDocuments({ receiver: userId, viewed: 'false', notify: 'true' }).exec((err, counts) => {
+        if (err) return res.status(500).send({ message: "Error petición." })
+
+        return res.status(200).send({ unnotify: counts })
+
+    })
+}
+
 function setViewedMessages(req, res) {
     var userId = req.user.sub;
     var messageId = req.params.id;
@@ -101,6 +144,8 @@ module.exports = {
     getRecMessages,
     getSendMessages,
     unviewedMessages,
-    setViewedMessages
+    setViewedMessages,
+    saveMessage100,
+    unviewedAndNotifyMessages
 
 }

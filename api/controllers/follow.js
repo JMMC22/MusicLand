@@ -162,6 +162,8 @@ function getMyFollowed(req, res) {
         return res.status(200).send({ follows })
     })
 }
+
+
 module.exports = {
 
     followSave,
@@ -170,5 +172,4 @@ module.exports = {
     getFollowedUsers,
     getMyFollowed,
     getMyFollows
-
 }

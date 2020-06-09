@@ -454,7 +454,7 @@ function recomendedUsers(req, res) {
 }
 async function getSimilarPublications(user_id) {
 
-    var publications = await Publication.find({ user: user_id }).exec().then((value) => {
+    var publications = await Publication.find({ user: user_id, $and: [{ 'song': { $ne: null } }] }).exec().then((value) => {
         return value;
     }).catch((err) => {
         return handleError(err);
@@ -477,6 +477,7 @@ async function getSimilarPublications(user_id) {
     }).catch((err) => {
         return handleError(err);
     });
+
 
     var similarsUsers = [];
 
@@ -516,6 +517,75 @@ async function getSimilarPublications(user_id) {
 
 }
 
+function userPerFollows(req, res) {
+    usersAndFollows().then((value) => {
+        return res.status(200).send({
+            value
+        })
+    })
+}
+
+async function usersAndFollows() {
+
+
+    var followed = await Follow.find().populate('followed').exec()
+        .then((followed) => {
+            return followed;
+        }).catch((err) => {
+            return handleError(err);
+        });
+
+    //Procesando followings
+    var followed_clean = [];
+
+    followed.forEach((follow) => {
+        followed_clean.push(follow.followed.username);
+    });
+
+    var usuario_cont = followed_clean.reduce((cont, user) => {
+        cont[user] = (cont[user] || 0) + 1;
+        return cont;
+    }, {});
+
+    var users = await User.find().exec()
+        .then((users) => {
+            return users;
+        }).catch((err) => {
+            return handleError(err);
+        });
+
+    //Procesando followings
+    var users_clean = [];
+
+    users.forEach((user) => {
+        users_clean.push(user.username);
+    });
+
+
+    users_clean.forEach((user) => {
+        if (Object.keys(usuario_cont).includes(user.toString()) == false) {
+            usuario_cont[user] = 0;
+        }
+
+    });
+    var output = Object.entries(usuario_cont).map(([user, cont]) => ({ user, cont }));
+
+    output.sort(function(a, b) {
+        if (a.cont < b.cont) {
+            return 1;
+        }
+        if (a.cont > b.cont) {
+            return -1;
+        }
+        // a must be equal to b
+        return 0;
+    });
+
+    return { output }
+
+
+}
+
 module.exports = {
     home,
     saveUser,
@@ -529,5 +599,6 @@ module.exports = {
     findByUsername,
     deleteUser,
     recomendedUsers,
-    getAllUsers
+    getAllUsers,
+    userPerFollows
 }

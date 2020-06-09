@@ -23,6 +23,7 @@ api.get('/users-search/:usernameSearch/:page?', md_auth.ensureAuth, UserControll
 api.delete('/user/:id', md_auth.ensureAuth, UserController.deleteUser);
 api.get('/similar-users', md_auth.ensureAuth, UserController.recomendedUsers);
 api.get('/all-users', md_auth.ensureAuth, UserController.getAllUsers);
+api.get('/user-follows', md_auth.ensureAuth, UserController.userPerFollows);
 
 
 
